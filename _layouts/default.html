@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Тестова сторінка</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="css/kube.min.css" />
+	<link rel="stylesheet" href="css/style.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+    <script src="js/kube.min.js"></script>
+
+
+</head>
+<body>
+	<div id="main">
+    <h1>Test web site</h1>
+    <nav>
+      <ul>
+        <li><a href="{{site.baseurl}}/index.html">Home</a></li>
+        <li><a href="{{site.baseurl}}/about.html">About</a></li>
+      </ul>
+    </nav>
+  {{content}}
+
+  </div>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-29085381-5', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
