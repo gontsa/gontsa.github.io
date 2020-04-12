@@ -136,7 +136,9 @@
 
           // create a variable for your markup and add it to the map 
           var marker = new mapboxgl.Marker({
-              color: row.Color
+              color: 'row.Color'
+              marker-symbol: 'park-15'
+            })
             })
             .setLngLat([row.Longitude, row.Latitude])
             .setPopup(popup)
