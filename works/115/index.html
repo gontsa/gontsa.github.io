@@ -12,23 +12,42 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js'></script>
     <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;700&display=swap" rel="stylesheet">  
     <link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/css/uikit.min.css" />
 
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/js/uikit-icons.min.js"></script>
   </head>
   <style>
     body {
-      background: #404040;
+      background: #ffffff;
       margin: 0;
       padding: 0;
+font: 400 12px/20px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
     }
+#map-container {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+}
+
+#map {
+    position: absolute;
+    top: 10vh;
+    height: 80vh;
+    width: 100%;
+}
+
+.marker {
+background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/washington-monument.jpg');
+background-size: cover;
+width: 50px;
+height: 50px;
+border-radius: 50%;
+cursor: pointer;
+}
 
 
-    #map {
-      border-left: 1px solid #fff;
-      position: absolute;
-      width: 100%;
-      top: 0;
-      bottom: 0;
-    }
 
 
     .mapboxgl-popup {
@@ -40,7 +59,7 @@
     }
 
     .mapboxgl-popup-content {
-      font: 400 15px/22px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
+      font: 400 14px/22px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
       padding: 0;
       width: 250px;
     }
@@ -50,6 +69,7 @@
     }
 
     .mapboxgl-popup-content h3 {
+font: 400 14px/22px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
       background: #eb5e00;
       text-align: center;
       color: #fff;
@@ -61,6 +81,7 @@
     }
 
     .mapboxgl-popup-content h4 {
+font: 400 14px/22px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
       margin: 0;
       display: block;
       padding: 10px 3px 10px 10px;
@@ -82,8 +103,9 @@
   </style>
 
   <body>
-
-    <div id="map"></div>
+<div class="uk-container uk-flex uk-flex-center" id="map-container">
+	<h1>Дерева, висаджені командою</h1>
+    <div class="uk-container" id="map"></div>
     <script>
       var transformRequest = (url, resourceType) => {
         var isMapboxRequest =
@@ -100,9 +122,12 @@
       mapboxgl.accessToken = 'pk.eyJ1IjoiZ29udHNhIiwiYSI6Im1QZFRZN0EifQ.NOXZpF5h8D4ix5V5xYJWJQ';
       var map = new mapboxgl.Map({
         container: 'map', // container id
-        style: "mapbox://styles/gontsa/ck8xddiio45pe1io14kckqt70", //YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
-        center: [24.06488,49.79905], // starting position [lng, lat]
-        zoom: 13.17, // starting zoom
+        style: "mapbox://styles/gontsa/ck8xddiio45pe1io14kckqt70", 
+        center: [24.05042,49.79771], // starting position [lng, lat]
+        zoom: 14.2, // starting zoom
+	pitch: 59,
+	bearing: 28,
+	antialias: true,
         transformRequest: transformRequest
       });
 
@@ -138,6 +163,7 @@
           // create a variable for your markup and add it to the map 
           var marker = new mapboxgl.Marker({
               color: row.Color
+
             
             })
             .setLngLat([row.Longitude, row.Latitude])
@@ -147,8 +173,9 @@
 
         });
       }
-
+	map.addControl(new mapboxgl.NavigationControl());
     </script>
+</div>
   </body>
 
 </html>
