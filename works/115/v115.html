@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Висаджено командою НП</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.css" rel="stylesheet" />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js'></script>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;700&display=swap" rel="stylesheet">  
+    <link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.4.3/dist/js/uikit-icons.min.js"></script>
+  </head>
+  <style>
+
+body { margin: 0; padding: 0; 
+
+    font: 400 12px/20px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
+
+}
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+
+
+
+.marker {
+background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/washington-monument.jpg');
+background-size: cover;
+width: 50px;
+height: 50px;
+border-radius: 50%;
+cursor: pointer;
+}
+
+
+
+
+    .mapboxgl-popup {
+      padding-bottom: 5px;
+    }
+
+    .mapboxgl-popup-close-button {
+      display: none;
+    }
+
+    .mapboxgl-popup-content {
+      font: 400 14px/22px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
+      padding: 0;
+      width: 250px;
+    }
+
+    .mapboxgl-popup-content-wrapper {
+      padding: 1%;
+    }
+
+    .mapboxgl-popup-content h3 {
+font: 400 14px/22px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
+      background: #eb5e00;
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      display: block;
+      padding: 15px;
+      font-weight: 700;
+      margin-top: -5px;
+    }
+
+    .mapboxgl-popup-content h4 {
+font: 400 14px/22px 'Alegreya Sans', 'Helvetica Neue', Sans-serif;
+      margin: 0;
+      display: block;
+      padding: 10px 3px 10px 10px;
+      font-weight: 400;
+    }
+
+    .mapboxgl-container {
+      cursor: pointer;
+    }
+
+    .mapboxgl-popup-anchor-top>.mapboxgl-popup-content {
+      margin-top: 3px;
+    }
+
+    .mapboxgl-popup-anchor-top>.mapboxgl-popup-tip {
+      border-bottom-color: rgb(61, 59, 59);
+    }
+
+  </style>
+
+  <body>
+    <div id="map"></div>
+    <script>
+      var transformRequest = (url, resourceType) => {
+        var isMapboxRequest =
+          url.slice(8, 22) === "api.mapbox.com" ||
+          url.slice(10, 26) === "tiles.mapbox.com";
+        return {
+          url: isMapboxRequest
+            ? url.replace("?", "?pluginName=sheetMapper&")
+            : url
+        };
+      };
+
+      //YOUR TURN: add your Mapbox access token 
+      mapboxgl.accessToken = 'pk.eyJ1IjoiZ29udHNhIiwiYSI6Im1QZFRZN0EifQ.NOXZpF5h8D4ix5V5xYJWJQ';
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: "mapbox://styles/gontsa/ck8xddiio45pe1io14kckqt70", 
+        center: [24.05042,49.79771], // starting position [lng, lat]
+        zoom: 14.2, // starting zoom
+	pitch: 59,
+	bearing: 28,
+	antialias: true,
+        transformRequest: transformRequest
+      });
+
+
+      map.on("load", function() {
+        init();
+      });
+
+      // Initialize Tabletop to access your table
+      function init() {
+        Tabletop.init({
+          // YOUR TURN: change 'key' value to point to your spreadsheet
+          key: 'https://docs.google.com/spreadsheets/d/1cSqodDAxrePI5iisUYauUSt5M_M1GBztcYPy8rMPrHE/edit?usp=sharing',
+          // once Tabletop has loaded the data, it passes it to the 'callback' function, 'addPoints', defined below
+          callback: addPoints,
+          simpleSheet: true
+        });
+      }
+
+
+      // create a function called addPoints that iterates through your table (row by row) to create markers and popups
+      function addPoints(data) {
+
+        // iterate through your table to set the marker to lat/long values for each row
+
+        data.forEach(function(row) {
+
+          // create a variable for your popup and populate your popup with information from your table
+          var popup = new mapboxgl.Popup({offset: [0, -48],closeOnClick: true})
+            .setHTML(`<h3>` + row.Name + `</h3>` + '<h4>' + '<b>' + 'Опис:<br>' + '</b>' + row.Description + '</h4>' + '<h4>' + '<b>' + 'Дата: ' + '</b>' + row.Data + '</h4>'); // use the table to populate your popup with text
+
+
+          // create a variable for your markup and add it to the map
+	 var el = document.createElement('div');
+el.className = 'marker';
+el.style.backgroundImage = 'url(marker.png)';
+el.style.width = '50px';
+el.style.height = '50px';
+
+
+         // var marker = new mapboxgl.Marker({
+          //    color: row.Color
+
+         //   
+          //  })
+	    new mapboxgl.Marker(el, {anchor: 'bottom'})
+            .setLngLat([row.Longitude, row.Latitude])
+            .setPopup(popup)
+            .addTo(map); // add the marker to the map
+
+
+        });
+      }
+	map.addControl(new mapboxgl.NavigationControl());
+    </script>
+
+  </body>
+
+</html>
