@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fedir Gontsa - 30DayMapChallenge, 2021. Day 14. Map with a new tool</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.21.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.20.0"></script>
+</head>
+<body>
+  <div id="vis"/>
+  <script>
+    const spec = {
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Interactive map of U.S. airport connections in 2008.",
+  "width": 960,
+  "height": 500,
+  "autosize": "pad",
+  "padding": {"top": 5, "left": 5, "right": 5, "bottom": 5},
+  "data": [
+    {
+      "name": "table",
+      "url": "https://gist.githubusercontent.com/gontsa/e8d72565df2f2b69233b118e816690f1/raw/c729ef41b6d72fb0b51b99f7d4b4c9f4919a5c10/hromady-pzo-count.json",
+      "format": {"type": "topojson", "feature": "hromady-pzo-count"}
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "size": {"signal": "[width, height]"},
+      "fit": {"signal": "data('table')"},
+      "type": "mercator"
+    }
+  ],
+  "title": {
+    "text": "Nature Reserve Fund of Ukraine",
+    "subtitle": "Day 014: Map with a new tool (Vega)",
+    "orient": "top",
+    "align": "left",
+    "anchor": "start",
+    "encode": {
+      "title": {
+        "enter": {
+          "fontSize": {"value": "24"},
+          "fill": {"value": "rgb(31, 88, 72)"}
+        }
+      },
+      "subtitle": {
+        "interactive": true,
+        "update": {
+          "fontStyle": {"value": "normal"},
+          "fontSize": {"value": "16"}
+        },
+        "hover": {"fontStyle": {"value": "normal"}}
+      }
+    }
+  },
+  "signals": [
+    {"name": "copy", "value": "Fedir Gontsa, 2021 #30DayMapChallenge"}
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "symlog",
+      "reverse": true,
+      "domain": {"data": "table", "field": "properties.pzo"},
+      "range": {"scheme": "darkgreen", "count": 12}
+    }
+  ],
+  "legends": [{"fill": "color", "orient": "bottom", "direction": "horizontal"}],
+  "marks": [
+    {
+      "name": "layer_0_marks",
+      "type": "shape",
+      "from": {"data": "table"},
+      "encode": {
+        "update": {
+          "fill": {"scale": "color", "field": "properties.pzo"},
+          "stroke": {"value": "black"},
+          "strokeWidth": {"value": 0.2},
+          "ariaRoleDescription": {"value": "geoshape"},
+          "tooltip": {"signal": "datum.properties"}
+        },
+        "hover": {"fill": {"value": "white"}}
+      },
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "encode": {
+        "enter": {
+          "x": {"value": 960},
+          "y": {"value": 530},
+          "fontSize": {"value": 10},
+          "align": {"value": "right"},
+          "fill": {"value": "rgb(31, 88, 72)"}
+        },
+        "update": {"text": {"signal": "copy"}}
+      }
+    }
+  ],
+  "config": {}
+};
+    vegaEmbed("#vis", spec, {mode: "vega"}).then(console.log).catch(console.warn);
+  </script>
+</body>
+</html>
