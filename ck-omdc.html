@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Черкаси — інклюзивні елементи інфраструктури (результати мапатону OMDC-2021)</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- UIkit CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.9.4/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.9.4/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.9.4/dist/js/uikit-icons.min.js"></script>
+
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    html{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;}
+    .uk-text-lead, h1, h2, h3, h4, h5, .subtitle, .subtitleabout {font-family: Roboto,sans-serif;}
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    #menu {
+background: #fff;
+position: absolute;
+z-index: 1;
+top: 10px;
+left: 10px;
+border-radius: 3px;
+width: 120px;
+border: 1px solid rgba(0, 0, 0, 0.4);
+font-family: 'Open Sans', sans-serif;
+}
+ 
+#menu a {
+font-size: 13px;
+color: #404040;
+display: block;
+margin: 0;
+padding: 0;
+padding: 10px;
+text-decoration: none;
+border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+text-align: center;
+}
+ 
+#menu a:last-child {
+border: none;
+}
+ 
+#menu a:hover {
+background-color: #f8f8f8;
+color: #404040;
+}
+ 
+#menu a.active {
+background-color: #3887be;
+color: #ffffff;
+}
+ 
+#menu a.active:hover {
+background: #3074a4;
+}
+
+.headerinfo {
+background-color: rgba(255, 255, 255, 0.8);
+border-radius: 3px;
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+padding: 10px;
+position: absolute;
+right: 10px;
+top: 10px;
+z-index: 1;
+max-width: 300px;
+font-size: 0.85em;
+}
+.headerinfo h4 {
+    margin: 0 0 10px;
+}
+.headerinfo div span {
+border-radius: 50%;
+display: inline-block;
+height: 10px;
+margin-right: 5px;
+width: 10px;
+}
+
+.legend {
+background-color: #fff;
+border-radius: 3px;
+bottom: 30px;
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+padding: 10px;
+position: absolute;
+right: 10px;
+z-index: 1;
+}
+ 
+.legend h4 {
+margin: 0 0 10px;
+}
+ 
+.legend div span {
+border-radius: 50%;
+display: inline-block;
+height: 10px;
+margin-right: 5px;
+width: 10px;
+}
+
+@media (max-width: 480px) {
+    .headerinfo {display: none;}
+
+}
+
+    </style>
+    </head>
+    <body>
+        <nav id="menu"></nav>
+        <div id='map'></div>
+
+        <div id="headerinfo" class="headerinfo">
+            <h4>Черкаси: інклюзивна інфраструктура</h4>
+            <p>Позначена на OpenStreetMap в рамках Мапатону з актуалізації геопросторових даних Черкащини<br />
+                Станом на 20 грудня 2021 року <br />(планується оновлення щомісяця)</p>
+
+            <div><span style="background-color: red"></span>Пониження тротуару</div>
+            <div><span style="background-color: yellow"></span>Доступність на візку</div>
+
+            <ul uk-accordion>
+                <li class="">
+                    <a class="uk-accordion-title" href="#">Детальніше</a>
+                    <div class="uk-accordion-content">
+                        <p><a href="https://wiki.openstreetmap.org/wiki/Uk:_Open_Mapathon:Digital_Cherkasy" target="_blank" title="Сторінка мапатону">Open Mapathon:Digital Cherkasy</a><br />Проводився в Черкасах з 25 жовтня по 25 листопада 2021 року.<br />
+                            Автор цієї версії мапи: <a href="https://www.behance.net/gontsa" target="_blank">Федір Гонца</a>
+                        </p>
+
+                    </div>
+                </li>
+                
+                
+            </ul>
+
+        </div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ29udHNhIiwiYSI6Im1QZFRZN0EifQ.NOXZpF5h8D4ix5V5xYJWJQ';
+const map = new mapboxgl.Map({
+container: 'map', // container ID
+style: 'mapbox://styles/gontsa/ckxdqgj5jeuff15qau0m8uhgr', // style URL
+center: [32.04307, 49.42246], // starting position [lng, lat]
+zoom: 11.86 // starting zoom
+});
+
+// Wait until the map has finished loading.
+map.on('load', () => {
+// Add a custom vector tileset source. This tileset contains
+// point features representing museums. Each feature contains
+// three properties. For example:
+// {
+//     alt_name: "Museo Arqueologico",
+//     name: "Museo Inka",
+//     tourism: "museum"
+// }
+
+
+map.addSource('kerb-lowered', {
+type: 'geojson',
+// Use a URL for the value for the `data` property.
+data: 'https://gist.githubusercontent.com/gontsa/11dd8ef4234c24b573f5c7209a86ec6e/raw/f9377b1cbc3c9a7e4aa6aff5d927853cb3c7bbd3/kerb-lowered.geojson'
+});
+
+map.addSource('wheelchair-points', {
+type: 'geojson',
+// Use a URL for the value for the `data` property.
+data: 'https://gist.githubusercontent.com/gontsa/408be2959d59641ea0e28db4b13a8873/raw/ba2ad5371c03377d03bd527cb249bd8d353497a8/wheelchair-points.geojson'
+});
+
+
+
+map.addLayer({
+'id': 'kerb-lowered',
+'type': 'circle',
+'source': 'kerb-lowered',
+'layout': {
+'visibility': 'visible'
+},
+'paint': {
+'circle-radius': 5,
+'circle-stroke-width': 1,
+'circle-color': 'red',
+'circle-stroke-color': 'white'
+}
+});
+
+
+map.addLayer({
+'id': 'wheelchair',
+'type': 'circle',
+'source': 'wheelchair-points',
+'layout': {
+'visibility': 'visible'
+},
+'paint': {
+'circle-radius': 3,
+'circle-stroke-width': 0,
+'circle-color': 'yellow',
+'circle-stroke-color': 'white'
+}
+});
+
+});
+
+
+// After the last frame rendered before the map enters an "idle" state.
+map.on('idle', () => {
+// If these two layers were not added to the map, abort
+if (!map.getLayer('kerb-lowered') || !map.getLayer('wheelchair')) {
+return;
+}
+ 
+// Enumerate ids of the layers.
+const toggleableLayerIds = ['kerb-lowered', 'wheelchair'];
+ 
+// Set up the corresponding toggle button for each layer.
+for (const id of toggleableLayerIds) {
+// Skip layers that already have a button set up.
+if (document.getElementById(id)) {
+continue;
+}
+ 
+// Create a link.
+const link = document.createElement('a');
+link.id = id;
+link.href = '#';
+link.textContent = id;
+link.className = 'active';
+ 
+// Show or hide layer when the toggle is clicked.
+link.onclick = function (e) {
+const clickedLayer = this.textContent;
+e.preventDefault();
+e.stopPropagation();
+ 
+const visibility = map.getLayoutProperty(
+clickedLayer,
+'visibility'
+);
+ 
+// Toggle layer visibility by changing the layout object's visibility property.
+if (visibility === 'visible') {
+map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+this.className = '';
+} else {
+this.className = 'active';
+map.setLayoutProperty(
+clickedLayer,
+'visibility',
+'visible'
+);
+}
+};
+ 
+const layers = document.getElementById('menu');
+layers.appendChild(link);
+}
+});
+</script>
+    </body>
+</html>
