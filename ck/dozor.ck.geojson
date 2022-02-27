@@ -1,0 +1,7 @@
+{
+"type": "FeatureCollection",
+"name": "dozor",
+"features": [
+{ "type": "Feature", "properties": { "fid": 1, "name": "ТРК \"Плазма\"", "address": "бул.Шевченка 145", "type": "підземні поверхи", "area": null, "value": null, "source": null }, "geometry": { "type": "Point", "coordinates": [ 32.0528655, 49.448714 ] } }
+]
+}

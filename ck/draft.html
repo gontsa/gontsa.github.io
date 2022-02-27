@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Черкаси мапа укриттів (неофіційна)</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="css/mapbox-gl.css" rel="stylesheet">
+<script src="js/mapbox-gl.js"></script>
+<link href="style.css" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+* {font: 12px/20px 'Open Sans', sans-serif;}
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+table {margin: 0; padding: 1.33em; font-size: 0.8em; }
+.header {margin: 0; padding: 0;}
+table {width: 80%; box-sizing: border-box;}
+table td {border: 1px solid #dbdbdb; border-width: 0 0 1px;}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="sidepanel"></div>
+
+<script>
+    function closeNav() {
+  document.getElementById("sidepanel").style.display = 'none';
+}
+    var bounds = [
+        [32.1312,49.3826],
+        [31.9659,49.4801]
+    ];
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZ29udHNhIiwiYSI6Im1QZFRZN0EifQ.NOXZpF5h8D4ix5V5xYJWJQ';
+const map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/mapbox/light-v10',
+center: [32.0486, 49.4314],
+        //maxBounds: bounds,
+        pitch: 0,
+        zoom: 12
+});
+
+// Add geolocate control to the map.
+map.addControl(
+new mapboxgl.GeolocateControl({
+positionOptions: {
+enableHighAccuracy: true
+},
+// When active the map will receive updates to the device's location as it changes.
+trackUserLocation: true,
+// Draw an arrow next to the location dot to indicate which direction the device is heading.
+showUserHeading: true
+})
+);
+
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');  
+map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+
+map.on('load', () => {
+map.addSource('dozor', {
+type: 'geojson',
+// Use a URL for the value for the `data` property.
+data: 'https://gist.githubusercontent.com/gontsa/4cd043fead07453378586aae046b96f8/raw/68a886b6dd8e6ee301a8be0b16dcad1ddee08d38/dozor.geojson'
+});
+ 
+
+
+
+
+
+
+
+map.addLayer({
+'id': 'dozor',
+'type': 'circle',
+'source': 'dozor',
+'paint': {
+'circle-radius': 7,
+'circle-stroke-width': 2,
+'circle-color': [
+                        'interpolate',
+                        ['linear'],
+                        ['get', 'typeflor'],
+                        0,
+                        '#064663',
+                        1,
+                        '#ECB365'
+                    ],
+'circle-stroke-color': 'white'
+}
+                    
+});
+
+
+// Create a popup, but don't add it to the map yet.
+const popup = new mapboxgl.Popup({
+closeButton: false,
+closeOnClick: false
+});
+
+map.on('mouseenter', 'dozor', function () {
+map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'dozor', function () {
+map.getCanvas().style.cursor = '';
+});
+ 
+map.on('click', 'dozor', (e) => {
+// Change the cursor style as a UI indicator.
+map.getCanvas().style.cursor = 'pointer';
+
+// Copy coordinates array.
+var coordinates = e.features[0].geometry.coordinates.slice();
+var nameplace = e.features[0].properties.nameplace;
+var address = e.features[0].properties.address;
+var typename = e.features[0].properties.typename;
+var area = e.features[0].properties.area;
+var value = e.features[0].properties.value;
+ 
+map.flyTo({center: coordinates, speed: 1, curve: 1});
+
+sidepanel.style.display = 'flex';
+//sidepanel.innerHTML = '<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>' + '<h4>' + nameplace + '</h4>' + '<table><tr><td>Адреса:</td><td>' + address + '</td></tr><tr><td>Тип укриття:</td><td>' + typename + '</td></tr><tr><td>Площа:</td>' + area + '</td></tr><tr><td>Ємність:</td>' + value + '</td></tr></table>';
+
+sidepanel.innerHTML = '<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>' + '<h4 class="header">' + nameplace + '</h4>' + '<table><tr><td>Адреса:</td><td>' + address + '</td></tr><tr><td>Тип укриття:</td><td>' + typename + '</td></tr><tr><td>Площа:</td><td>' + area + ' кв.м</td></tr><tr><td>Місткість:</td><td>~' + value + ' людини</td></tr><tr><td>Джерело:</td><td><a href="http://dozor.cc.ua/shell.html" target="_blank">dozor.cc.ua</a></td></tr></table>';
+
+
+
+
+
+
+// Ensure that if the map is zoomed out such that multiple
+// copies of the feature are visible, the popup appears
+// over the copy being pointed to.
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+ 
+// Populate the popup and set its coordinates
+// based on the feature found.
+//popup.setLngLat(coordinates).setHTML('<h4>' + nameplace + '</h4>' + '<p>' + address + '</p>' + '<p>' +typename + '</p>' + area + '<p>' + value + '</p>').addTo(map);
+});
+ 
+map.on('mouseleave', 'dozor', () => {
+map.getCanvas().style.cursor = '';
+popup.remove();
+//sidepanel.style.display = 'none';
+});
+});
+
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Черкаси мапа укриттів (неофіційна)</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="css/mapbox-gl.css" rel="stylesheet">
+<script src="js/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+<link href="style.css" rel="stylesheet">
+
+</head>
+<body>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+ </style>
+ <style>
+
+   
+    
+    
+    </style>
+
+    </head>
+    <body>
+
+<div id="map"></div>
+<div id="sidepanel"></div>
+
+<script>
+
+var bounds = [
+        [32.1312,49.3826],
+        [31.9659,49.4801]
+    ];
+
+	mapboxgl.accessToken = 'pk.eyJ1IjoiZ29udHNhIiwiYSI6Im1QZFRZN0EifQ.NOXZpF5h8D4ix5V5xYJWJQ';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/gontsa/ckm660i7beqk917p6st11kbf1',
+        center: [32.0486, 49.4314],
+        // maxBounds: bounds,
+        pitch: 0,
+        zoom: 12
+    });
+    var uaplaces = './dozor.ck.geojson';
+    var hoveredStateId = null;
+
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');  
+    map.addControl(new mapboxgl.FullscreenControl(), 'top-right');
+
+    map.touchZoomRotate.disable();
+    map.touchPitch.disable();
+    map.scrollZoom.disable();
+
+
+ // zoom delay
+var zoomTimer;
+
+map.on('mouseover', function() {
+	zoomTimer = setTimeout(function(){
+		map.scrollZoom.enable();
+        map.touchZoomRotate.enable();
+    }, 1000);
+});
+
+
+map.on('mouseout', function() {
+    clearTimeout(zoomTimer);
+    map.scrollZoom.disable();
+    map.touchZoomRotate.disable();
+});
+</script>
+<script>
+function closeNav() {
+  document.getElementById("sidepanel").style.display = 'none';
+}
+
+ map.on('load', function () {
+var layers = map.getStyle().layers;
+var firstSymbolId;
+for (var i = 0; i < layers.length; i++) {
+if (layers[i].type === 'symbol') {
+firstSymbolId = layers[i].id;
+break;
+}
+}
+
+map.loadImage('https://fedir.gontsa.com/projects/gutsulia/images/poi.png', function(error, image) {
+if (error) throw error;
+map.addImage('poi', image);
+});
+
+map.addSource('places', {
+      'type': 'geojson',
+      'data': uaplaces,
+      'cluster': true,
+'clusterMaxZoom': 10,
+'clusterRadius': 15
+});
+
+map.addLayer({
+id: 'clusters',
+type: 'circle',
+source: 'places',
+filter: ['has', 'point_count'],
+paint: {
+'circle-color': [
+'step',
+['get', 'point_count'],
+'#ffffff',
+100,
+'#f1f075',
+750,
+'#f28cb1'
+],
+'circle-radius': [
+'step',
+['get', 'point_count'],
+14,
+15,
+20
+]
+}
+});
+
+map.addLayer({
+id: 'cluster-count',
+type: 'symbol',
+source: 'places',
+filter: ['has', 'point_count'],
+layout: {
+'text-field': '{point_count_abbreviated}',
+'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+'text-size': 14
+},
+'paint': {
+    'text-color': '#a9173d',
+    'text-halo-color': '#a9173d',
+    'text-halo-width': 0
+}
+});
+
+// Create a popup, but don't add it to the map yet.
+var popup = new mapboxgl.Popup({
+closeButton: false,
+closeOnClick: false
+});
+
+
+
+map.on('click', 'clusters', function (e) {
+    
+var features = map.queryRenderedFeatures(e.point, {
+layers: ['clusters']
+});
+var clusterId = features[0].properties.cluster_id;
+map.getSource('places').getClusterExpansionZoom(
+clusterId,
+function (err, zoom) {
+if (err) return;
+ 
+map.easeTo({
+center: features[0].geometry.coordinates,
+zoom: zoom
+});
+}
+);
+});
+
+map.addLayer({
+id: 'unclustered-point',
+type: 'symbol',
+source: 'places',
+filter: ['!', ['has', 'point_count']],
+'layout': {
+    
+    'icon-image': 'poi',
+    'icon-padding': 0,
+    'icon-allow-overlap': true
+}
+});
+
+map.on('click', 'unclustered-point', function (e) {
+  
+var coordinates = e.features[0].geometry.coordinates.slice();
+var names = e.features[0].properties.name;
+var description = e.features[0].properties.description;
+var pic = e.features[0].properties.pic;
+var url = e.features[0].properties.url;
+ 
+map.flyTo({center: coordinates, speed: 0.2, zoom: 10, curve: 1});
+
+sidepanel.style.display = 'flex';
+sidepanel.innerHTML = '<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a><br><h4 class="region">' + names + '</h4><br /><img class="pic" src="images/' + pic + '" alt="' + names + '" /><div class="caption"> Photo by <a href="https://unsplash.com/@fwed?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Fred Moon</a> on <a href="/s/photos/man?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a></div><div><p> ' + description + '<a href="' + url + '" class="more">Детальніше</a></p></div>';
+
+});
+ 
+
+map.on('mouseenter', 'clusters', function () {
+map.getCanvas().style.cursor = 'pointer';
+});
+map.on('mouseleave', 'clusters', function () {
+map.getCanvas().style.cursor = '';
+});
+
+
+map.on('mouseenter', 'unclustered-point', function (e) {
+
+    map.getCanvas().style.cursor = 'pointer';
+ 
+var coordinates = e.features[0].geometry.coordinates.slice();
+var names = e.features[0].properties.name;
+var art = e.features[0].properties.art;
+var description = e.features[0].properties.description;
+ 
+
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+ 
+popup.setLngLat(coordinates).setHTML(names).addTo(map);
+
+//sidepanel.style.display = 'flex';
+//sidepanel.innerHTML = '<h4 class="region">' + names + '</h4><br /><div><p> ' + description + '</p></div>';
+
+
+});
+ 
+map.on('mouseleave', 'unclustered-point', function () {
+map.getCanvas().style.cursor = '';
+popup.remove();
+//sidepanel.style.display = 'none';
+});
+
+
+});
+
+
+
+</script>
+    </body>
+</html>
+
