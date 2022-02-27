@@ -34,12 +34,40 @@ table td {border: 1px solid #dbdbdb; border-width: 0 0 1px;}
 	mapboxgl.accessToken = 'pk.eyJ1IjoiZ29udHNhIiwiYSI6Im1QZFRZN0EifQ.NOXZpF5h8D4ix5V5xYJWJQ';
 const map = new mapboxgl.Map({
 container: 'map',
-style: 'mapbox://styles/mapbox/light-v10',
+style: 'mapbox://styles/gontsa/cl054wh97000b15mswlyqi1af',
 center: [32.0486, 49.4314],
-        //maxBounds: bounds,
+      //maxBounds: bounds,
         pitch: 0,
         zoom: 12
 });
+
+
+//var map = new mapboxgl.Map({
+//      container: 'map',
+//      style: {
+//        version: 8,
+//        sources: {
+//          osm: {
+//            type: 'raster',
+//            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+//          }
+//        },
+//        layers: [{
+//          id: 'osm',
+//          type: 'raster',
+//          source: 'osm',
+//        }],
+//      }
+//    });
+
+
+ //   var map = new mapboxgl.Map({
+ //     container: 'map',
+ //     style: 'https://maputnik.github.io/osm-liberty/style.json',
+ //     center: [32.0486, 49.4314],
+ //     zoom: 12,
+//      hash: true
+ // });
 
 // Add geolocate control to the map.
 map.addControl(
@@ -118,7 +146,7 @@ var typename = e.features[0].properties.typename;
 var area = e.features[0].properties.area;
 var value = e.features[0].properties.value;
  
-map.flyTo({center: coordinates, speed: 1, curve: 1});
+map.flyTo({center: coordinates, speed: 0.8, zoom: 14, curve: 1});
 
 sidepanel.style.display = 'flex';
 //sidepanel.innerHTML = '<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>' + '<h4>' + nameplace + '</h4>' + '<table><tr><td>Адреса:</td><td>' + address + '</td></tr><tr><td>Тип укриття:</td><td>' + typename + '</td></tr><tr><td>Площа:</td>' + area + '</td></tr><tr><td>Ємність:</td>' + value + '</td></tr></table>';
