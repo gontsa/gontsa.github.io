@@ -1,2 +1,7 @@
 td {font-size:0.8em;text-align: left;}
 .uk-table th {font-size:0.6em;font-weight: 700;}
+/* Sortable tables https://www.kryogenix.org/code/browser/sorttable/ */
+table.sortable thead {
+    font-weight: bold;
+    cursor: pointer;
+}
